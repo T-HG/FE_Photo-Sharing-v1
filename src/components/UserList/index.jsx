@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import models from "../../modelData/models";
+import fetchModelData from "../../lib/fetchModelData";
 
 function UserList() {
-  const users = models.userListModel();
+  const [users, setUsers ] = useState([]);
 
+  useEffect(() => {
+    fetchModelData("/user/list").then((data) =>{
+      setUsers(data);
+    });
+  },[]);
   return (
     <div>
       {users.map((user) => (

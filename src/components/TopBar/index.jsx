@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppBar, Toolbar, Typography } from "@mui/material";
 import { useLocation, matchPath } from "react-router-dom";
 
@@ -7,28 +7,32 @@ import "./styles.css";
 /**
  * Define TopBar, a React component of Project 4.
  */
-import models from "../../modelData/models";
+import fetchModelData from "../../lib/fetchModelData";
 function TopBar () {
   const location = useLocation();
 
-  let context = "Users";
+  const [context, setContext] = useState("Users");
 
-  const userMatch = matchPath("/users/:userId", location.pathname);
-  const photoMatch = matchPath("/photos/:userId", location.pathname);
-
-  if (userMatch){
-    const user = models.userModel(userMatch.params.userId);
-    if (user){
-      context = `${user.first_name} ${user.last_name}`;
+  useEffect(() => {
+    const userMatch = matchPath("/users/:userId", location.pathname);
+    const photoMatch = matchPath("/photos/:userId", location.pathname);
+    
+    if (userMatch){
+      fetchModelData(`/user/${userMatch.params.userId}`).then((user) =>{
+        setContext(`${user.first_name} ${user.last_name}`);
+      });
+      return;
     }
-  }
-
-  if (photoMatch){
-    const user = models.userModel(photoMatch.params.userId);
-    if (user){
-      context = `Photo of ${user.first_name} ${user.last_name}`;
+    if (photoMatch){
+      fetchModelData(`/user/${photoMatch.params.userId}`).then((user) => {
+        setContext(`Photo of ${user.first_name}  ${user.last_name}`);
+      });
+      return;
     }
-  }
+  
+    setContext("Users");
+  },[location.pathname]);
+
     return (
       <AppBar className="topbar-appBar" position="absolute">
         <Toolbar>
