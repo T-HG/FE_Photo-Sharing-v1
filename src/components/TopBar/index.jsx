@@ -8,10 +8,17 @@ import "./styles.css";
  * Define TopBar, a React component of Project 4.
  */
 import fetchModelData from "../../lib/fetchModelData";
-function TopBar () {
+function TopBar ( {loggedUser, onLogout }) {
   const location = useLocation();
 
   const [context, setContext] = useState("Users");
+
+  function handleLogout(){
+    fetchModelData("/admin/logout", {
+      method:"POST",}).finally(() => {
+        onLogout();
+      });
+  }
 
   useEffect(() => {
     const userMatch = matchPath("/users/:userId", location.pathname);
@@ -40,7 +47,15 @@ function TopBar () {
             Nguyễn Văn Thắng
           </Typography>
           <div style={{ margin: "auto"}}>
-            {context}
+            {loggedUser ? context : "Please Login"}
+          </div>
+          <div>
+          {loggedUser && (
+            <>
+              Hi {loggedUser.first_name}{" "}
+              <button onClick={handleLogout}>Logout</button>
+            </>
+          )}
           </div>
         </Toolbar>
       </AppBar>

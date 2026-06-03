@@ -6,8 +6,20 @@
  */
 
 const API_BASE = "http://localhost:3001";
-function fetchModel(url) {
-  return fetch(API_BASE + url).then((res => {
+function fetchModelData(url, options = {}) {
+
+  const fetchOption = {
+    method: options.method || "GET",
+    headers: {
+      "Content-Type" : "application/json",
+    }
+  };
+
+  if( options.body) {
+    fetchOption.body = JSON.stringify(options.body);
+  }
+
+  return fetch(API_BASE + url, fetchOption).then((res => {
     if (!res.ok){
       throw new Error(res.status);
     }
@@ -15,4 +27,4 @@ function fetchModel(url) {
   }));
 }
 
-export default fetchModel;
+export default fetchModelData;
